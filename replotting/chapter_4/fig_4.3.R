@@ -241,8 +241,6 @@ p_4b = ggplot(df_gh, aes(x = cycle_type, y = Uptake, fill = as.character(cycle),
   theme(plot.margin = unit(c(0.6, 0.25, 0.25, 0.25), "cm"))
 
 
-
-
 ##### 4C. Bars ####
 
 p_4c = ggplot(df_gh, aes(x = ID2, y = Uptake, fill = cycle, color = as.character(cycle))) +
@@ -369,6 +367,21 @@ p_5b = ggplot(df5_b, aes(y=ID2, x=Uptake, group=type, fill=type))+
   custom_theme +
   theme(plot.margin = unit(c(0.25, 0, 0.25, -0.2), "cm"))
 
+
+
+p_5box = ggplot(df5_b, aes(x = cycle_type, y = Uptake, fill = as.character(cycle_type), color = as.character(cycle_type))) +
+  labs(y = 'Measured uptake (fold)', x = 'cycle') +
+  geom_point(alpha = 0.75, size = 1, alpha=0.80, stroke = 0.1, color='black', shape=21) +
+  geom_boxplot(width=0.40, alpha=0.5, lwd=0.3, fatten=0.75, varwidth = FALSE) +
+  scale_y_continuous(breaks = seq(0, 15, 5), limits = c(0,16), expand = expansion(mult = c(0.0, 0.0))) +
+  scale_color_manual(values=colours) +
+  scale_fill_manual(values=colours) +
+  custom_theme +
+  theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+
+wilcox.test(subset(df5_b, cycle_type == 'low-uptake')$Uptake, subset(df5_b, cycle_type == 'high-uptake')$Uptake, 'two.sided')
+
+
 ##### 5C Heatmap ####
 
 # move data into a long format
@@ -400,7 +413,7 @@ p_5c = ggplot(df5_c_long, aes(y = ID2, x=variable, color=cycle_type, size=value)
 
 ##### Fig 5 ####
 
-fig_5 = plot_grid(plot_spacer(), p_5a, p_5b, p_5c, plot_spacer(), ncol=5, rel_widths = c(2.2, 3.9, 4, 1.8, 2.2), labels = c('', 'a', 'b', 'c', ''), label_size=10)
+fig_5 = plot_grid(plot_spacer(), p_5a, p_5box, p_5b, p_5c, plot_spacer(), ncol=6, rel_widths = c(1.1, 3.9, 2.2, 4, 1.8, 1.1), labels = c('', 'a', 'b', 'c', 'd', ''), label_size=10)
 fig_5
 
 dev.print(pdf, 'Fig_4.4.pdf', width = 5.118, height = 1.4)
