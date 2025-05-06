@@ -168,15 +168,8 @@ p_umap_aldh1 = ggplot(umap_aldh1, aes(x=UMAP1, y=UMAP2, color = as.character(y),
   scale_color_manual(values=c("#cccccc", "black")) +
   scale_fill_manual(values=c("#cccccc", "#0d677c")) +
   geom_point(size=umap_aldh1$size, alpha=0.5, shape=21, stroke=0.1) +
-  theme(
-    panel.background = element_blank(),
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = 'None',
-    axis.line.y.left=element_line(color="#101e25", size=0.5, linetype = 'dashed'),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank())
+  default_theme
+
 
 umap_pkm2 <- read_csv("data/UMAP_PKM2.csv")
 # umap_pkm2 = subset(umap_pkm2, split == 's')
@@ -189,14 +182,7 @@ p_umap_pkm2 = ggplot(umap_pkm2, aes(x=UMAP1, y=UMAP2, color = as.character(y), f
   scale_color_manual(values=c("#cccccc", "black")) +
   scale_fill_manual(values=c("#cccccc", "#0d677c")) +
   geom_point(size=umap_aldh1$size, alpha=0.5, shape=21, stroke=0.1) +
-  theme(
-    panel.background = element_blank(),
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    axis.ticks = element_blank(),
-    legend.position = 'None',
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank())
+  default_theme
 
 umap_vdr <- read_csv("data/UMAP_VDR.csv")
 # umap_vdr = subset(umap_vdr, split == 's')
@@ -209,15 +195,7 @@ p_umap_vdr = ggplot(umap_vdr, aes(x=UMAP1, y=UMAP2, color = as.character(y), fil
   scale_color_manual(values=c("#cccccc", "black")) +
   scale_fill_manual(values=c("#cccccc", "#0d677c")) +
   geom_point(size=umap_vdr$size, alpha=0.5, shape=21, stroke=0.1) +
-  theme(
-    panel.background = element_blank(),
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    axis.ticks = element_blank(),
-    axis.line.y.left=element_line(color="#101e25", size=0.5, linetype = 'dashed'),
-    legend.position = 'None',
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank())
+  default_theme
 
 
 sfig2 = plot_grid(p_umap_pkm2, p_umap_aldh1, p_umap_vdr, rel_widths = c(2, 2, 2),
@@ -232,35 +210,38 @@ dev.off()
 
 ##### S Fig 3 #####
 
-dfs3 <- read_csv("figures/data/similarity_histograms.csv")
+dfs3 <- read_csv("data/similarity_histograms.csv")
 
 sfig3a = ggplot(subset(dfs3, dataset == 'ALDH1'), aes(x=`Tanimoto similarity`, fill=kind)) +
   geom_density(alpha=0.4, linewidth = 0.45) +
-  scale_fill_manual(values=c("#5c8095", "#dddddd")) +
+  scale_fill_manual(values=c("#0d677c", "#dddddd")) +
   labs(x='Mean Tanimoto similarity', fill='', title='ALDH1') +
   scale_x_continuous(limits = c(0,0.3), expand = expansion(mult = c(0.01, 0.01)))+
-  default_plot_theme + theme(legend.position = 'none')
+  default_theme + theme(legend.position = 'none',
+                        plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig3b = ggplot(subset(dfs3, dataset == 'PKM2'), aes(x=`Tanimoto similarity`, fill=kind)) +
   geom_density(alpha=0.4, linewidth = 0.45) +
-  scale_fill_manual(values=c("#5c8095", "#dddddd")) +
+  scale_fill_manual(values=c("#0d677c", "#dddddd")) +
   labs(x='Mean Tanimoto similarity', fill='', title='PKM2') +
   scale_x_continuous(limits = c(0,0.3), expand = expansion(mult = c(0.01, 0.01)))+
-  default_plot_theme + theme(legend.position = 'none')
+  default_theme + theme(legend.position = 'none',
+                        plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig3c = ggplot(subset(dfs3, dataset == 'VDR'), aes(x=`Tanimoto similarity`, fill=kind)) +
   geom_density(alpha=0.4, linewidth = 0.45) +
-  scale_fill_manual(values=c("#5c8095", "#dddddd")) +
+  scale_fill_manual(values=c("#0d677c", "#dddddd")) +
   labs(x='Mean Tanimoto similarity', fill='', title='VDR') +
   scale_x_continuous(limits = c(0,0.3), expand = expansion(mult = c(0.01, 0.01)))+
-  default_plot_theme + theme(legend.position = 'right')
+  default_theme + theme(legend.position = 'right',
+                        plot.margin = unit(c(0.25, 0.25, 0.25, 0.4), "cm"))
 
 
-sfig3 = plot_grid(sfig3a, sfig3b, sfig3c, plot_spacer(), ncol = 4, rel_widths = c(1, 1, 1.7, 0.2),
-                  labels = c('a', 'b', 'c', ''), label_size=8)
+sfig3 = plot_grid(sfig3a, sfig3b, sfig3c, ncol = 4, rel_widths = c(1, 1, 2.2, 0.1),
+                  labels = c('a', 'b', 'c', ''), label_size=10)
 
 
-pdf('figures/sfig3.pdf', width = 180/25.4, height = 45/25.4)
+pdf('sfig3.pdf', width = 5.118, height = 1.275591)
 print(sfig3)
 dev.off()
 
@@ -287,7 +268,7 @@ figs4a = ggplot(dfs4ac, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
 
 figs4c = ggplot(dfs4ac, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1) +
@@ -296,7 +277,7 @@ figs4c = ggplot(dfs4ac, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
 
 
 dfs4bd = subset(df, train_cycle == 15 & batch_size == 64 & architecture == 'gcn' & dataset == 'PKM2' & n_start == 64)
@@ -317,7 +298,7 @@ figs4b = ggplot(dfs4bd, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
 
 figs4d = ggplot(dfs4bd, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1, linetype='dashed') +
@@ -326,7 +307,7 @@ figs4d = ggplot(dfs4bd, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 
 ###### second row ######
@@ -350,7 +331,7 @@ figs4e = ggplot(dfs4eg, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
 
 figs4g = ggplot(dfs4eg, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1) +
@@ -359,7 +340,7 @@ figs4g = ggplot(dfs4eg, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
 
 
 dfs4fh = subset(df, train_cycle == 15 & batch_size == 64 & architecture == 'gcn' & dataset == 'ALDH1' & n_start == 64)
@@ -380,7 +361,7 @@ figs4f = ggplot(dfs4fh, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
 
 figs4h = ggplot(dfs4fh, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1, linetype='dashed') +
@@ -389,7 +370,7 @@ figs4h = ggplot(dfs4fh, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 
 ###### third row ######
@@ -412,7 +393,7 @@ figs4i = ggplot(dfs4ik, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7.5, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.5), "cm"))
 
 figs4k = ggplot(dfs4ik, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1) +
@@ -421,7 +402,7 @@ figs4k = ggplot(dfs4ik, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
 
 dfs4jl = subset(df, train_cycle == 15 & batch_size == 64 & architecture == 'gcn' & dataset == 'VDR' & n_start == 64)
 mean_sim_per_method = subset(df, train_cycle == 0 & batch_size == 64 & architecture == 'gcn' & dataset == 'VDR' & n_start == 64)  # $mean_total_sims
@@ -441,7 +422,7 @@ figs4j = ggplot(dfs4jl, aes(x = starting_bias, y = enrichment, color = acquisiti
   scale_y_continuous(breaks = seq(0,7.5, by=1)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.5), "cm"))
 
 figs4l = ggplot(dfs4jl, aes(x = starting_bias, y = test_roc_auc, color = acquisition_method, fill = acquisition_method))+
   geom_smooth(method=lm, level=0.95, size=0.45, alpha=0.1, linetype='dashed') +
@@ -450,160 +431,160 @@ figs4l = ggplot(dfs4jl, aes(x = starting_bias, y = test_roc_auc, color = acquisi
   scale_y_continuous(breaks = seq(0.35,0.75, by=0.05)) +
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 
 figs4 = plot_grid(figs4a, figs4b, figs4c,  figs4d, 
                   figs4e, figs4f, figs4g,  figs4h, 
                   figs4i, figs4j, figs4k,  figs4l, 
-                  ncol=4, label_size = 8, 
+                  ncol=4, label_size = 10, 
                   labels= c('a', 'b', 'c', 'd',
                             'e', 'f', 'g', 'h', 
                             'i', 'j', 'k', 'l'))
 
-pdf('figures/sfig4.pdf', width = 180/25.4, height = 130/25.4)
+pdf('sfig4.pdf', width = 5.118, height = 3.685039)
 print(figs4)
 dev.off()
 
 
 ##### S Fig 5 #######
-
-dfs5 = subset(df, train_cycle >= 0 & batch_size == 64 & bias == 'Innate' & n_start == 64 & scrambledx == TRUE)
-
-
-dfs5 = dfs5 %>%
-  group_by(acquisition_method, bias, dataset, total_mols_screened, train_cycle, architecture) %>%
-  summarise(across(c("hits_discovered", "test_tpr", 'test_roc_auc',
-                     'test_balanced_accuracy', 'enrichment'),
-                   list(mean = mean, sd = sd, se = se))) %>% ungroup()
-
-sfig5a = ggplot(subset(dfs5, dataset == 'PKM2'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
-# u r b l
-sfig5b = ggplot(subset(dfs5, dataset == 'ALDH1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
-
-sfig5c = ggplot(subset(dfs5, dataset == 'VDR'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
-
-sfig5d = ggplot(subset(dfs5, dataset == 'FEN1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
-
-sfig5e = ggplot(subset(dfs5, dataset == 'GBA'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
-
-sfig5f = ggplot(subset(dfs5, dataset == 'KAT2A'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
-
-sfig5g = ggplot(subset(dfs5, dataset == 'IDH1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='n molecules screened', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
-
-sfig5h = ggplot(subset(dfs5, dataset == 'OPRK1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='n molecules screened', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
-
-sfig5i = ggplot(subset(dfs5, dataset == 'ADRB2'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
-  geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
-              color=NA, alpha=0.1) +
-  labs(y = '', x='n molecules screened', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=custom_colours) +
-  scale_fill_manual(values=custom_colours) +
-  geom_line(size=0.45) +
-  coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
-  scale_y_continuous(breaks = seq(0,7, by=1)) +
-  scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
-  scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
-
-
-sfig5 = plot_grid(sfig5a, sfig5b, sfig5c,
-                     sfig5d, sfig5e, sfig5f,
-                     sfig5g, sfig5h, sfig5i,
-                     labels = c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ,'i'),
-                     ncol=3, label_size=8)
-
-pdf('figures/sfig5.pdf', width = 120/25.4, height = 105/25.4)
-print(sfig5)
-dev.off()
+# 
+# dfs5 = subset(df, train_cycle >= 0 & batch_size == 64 & bias == 'Innate' & n_start == 64 & scrambledx == TRUE)
+# 
+# 
+# dfs5 = dfs5 %>%
+#   group_by(acquisition_method, bias, dataset, total_mols_screened, train_cycle, architecture) %>%
+#   summarise(across(c("hits_discovered", "test_tpr", 'test_roc_auc',
+#                      'test_balanced_accuracy', 'enrichment'),
+#                    list(mean = mean, sd = sd, se = se))) %>% ungroup()
+# 
+# sfig5a = ggplot(subset(dfs5, dataset == 'PKM2'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
+# # u r b l
+# sfig5b = ggplot(subset(dfs5, dataset == 'ALDH1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+# 
+# sfig5c = ggplot(subset(dfs5, dataset == 'VDR'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+# 
+# sfig5d = ggplot(subset(dfs5, dataset == 'FEN1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
+# 
+# sfig5e = ggplot(subset(dfs5, dataset == 'GBA'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+# 
+# sfig5f = ggplot(subset(dfs5, dataset == 'KAT2A'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+# 
+# sfig5g = ggplot(subset(dfs5, dataset == 'IDH1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = 'Mean enrichment in\nacquired molecules', x='n molecules screened', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
+# 
+# sfig5h = ggplot(subset(dfs5, dataset == 'OPRK1'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='n molecules screened', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+# 
+# sfig5i = ggplot(subset(dfs5, dataset == 'ADRB2'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
+#   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
+#               color=NA, alpha=0.1) +
+#   labs(y = '', x='n molecules screened', color = 'Method', fill = 'Method')+
+#   scale_color_manual(values=custom_colours) +
+#   scale_fill_manual(values=custom_colours) +
+#   geom_line(size=0.45) +
+#   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 7), expand=F) +
+#   scale_y_continuous(breaks = seq(0,7, by=1)) +
+#   scale_x_continuous(breaks = c(64, 250, 500, 750, 1000)) +
+#   scale_linetype_manual(values=c("dashed", "solid", "dotted"))+
+#   default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+# 
+# 
+# sfig5 = plot_grid(sfig5a, sfig5b, sfig5c,
+#                      sfig5d, sfig5e, sfig5f,
+#                      sfig5g, sfig5h, sfig5i,
+#                      labels = c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ,'i'),
+#                      ncol=3, label_size=8)
+# 
+# pdf('figures/sfig5.pdf', width = 120/25.4, height = 105/25.4)
+# print(sfig5)
+# dev.off()
 
 
 ##### S Fig 6 ######
@@ -624,7 +605,7 @@ sfig6a = ggplot(subset(dfs6, dataset == 'PKM2' & architecture == 'mlp'), aes(x =
   coord_cartesian(xlim = c(1, 15.5), ylim = c(0.4, 0.7), expand=F) +
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
 
 sfig6b = ggplot(subset(dfs6, dataset == 'PKM2' & architecture == 'gcn'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -637,7 +618,7 @@ sfig6b = ggplot(subset(dfs6, dataset == 'PKM2' & architecture == 'gcn'), aes(x =
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
 
 sfig6c = ggplot(subset(dfs6, dataset == 'PKM2' & architecture == 'rf'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -650,7 +631,7 @@ sfig6c = ggplot(subset(dfs6, dataset == 'PKM2' & architecture == 'rf'), aes(x = 
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
 
 sfig6d = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'mlp'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -662,7 +643,7 @@ sfig6d = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'mlp'), aes(x 
   coord_cartesian(xlim = c(1, 15.5), ylim = c(0.4, 0.7), expand=F) +
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
 
 sfig6e = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'gcn'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -675,7 +656,7 @@ sfig6e = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'gcn'), aes(x 
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
 
 sfig6f = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'rf'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -688,7 +669,7 @@ sfig6f = ggplot(subset(dfs6, dataset == 'ALDH1' & architecture == 'rf'), aes(x =
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
 
 sfig6g = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'mlp'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -700,7 +681,7 @@ sfig6g = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'mlp'), aes(x = 
   coord_cartesian(xlim = c(1, 15.5), ylim = c(0.4, 0.7), expand=F) +
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
 
 sfig6h = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'gcn'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -713,7 +694,7 @@ sfig6h = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'gcn'), aes(x = 
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
 
 sfig6i = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'rf'), aes(x = train_cycle, y=test_roc_auc_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = test_roc_auc_mean - test_roc_auc_se, ymax = test_roc_auc_mean + test_roc_auc_se),
@@ -726,15 +707,17 @@ sfig6i = ggplot(subset(dfs6, dataset == 'VDR' & architecture == 'rf'), aes(x = t
   scale_y_continuous(breaks = seq(0.4, 0.7, by=0.05)) +
   scale_x_continuous(breaks = seq(1,15, by=2)) +
   scale_linetype_manual(values=c("dotted"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
 
-sfig6 = plot_grid(sfig6a, sfig6b, sfig6c,
-                  sfig6d, sfig6e, sfig6f,
-                  sfig6g, sfig6h, sfig6i,
-                  labels = c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'), 
-                  ncol=3, label_size=8)
+sfig6 = plot_grid(sfig6a, sfig6b, sfig6c, plot_spacer(),
+                  sfig6d, sfig6e, sfig6f, plot_spacer(),
+                  sfig6g, sfig6h, sfig6i, plot_spacer(),
+                  labels = c('a', 'b', 'c', '',
+                             'd', 'e', 'f', '', 
+                             'g', 'h', 'i', ''), 
+                  ncol=4, label_size=10)
 
-pdf('figures/sfig6.pdf', width = 110/25.4, height = 90/25.4)
+pdf('sfig6.pdf', width = 5.118, height = 3.25)
 print(sfig6)
 dev.off()
 
@@ -755,7 +738,7 @@ sfig7a = ggplot(subset(df7, architecture == 'mlp' & dataset == 'PKM2'), aes(x = 
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7b = ggplot(subset(df7, architecture == 'gcn' & dataset == 'PKM2'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -766,7 +749,7 @@ sfig7b = ggplot(subset(df7, architecture == 'gcn' & dataset == 'PKM2'), aes(x = 
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7c = ggplot(subset(df7, architecture == 'rf' & dataset == 'PKM2'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -777,7 +760,7 @@ sfig7c = ggplot(subset(df7, architecture == 'rf' & dataset == 'PKM2'), aes(x = t
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7d = ggplot(subset(df7, architecture == 'mlp' & dataset == 'ALDH1'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -788,7 +771,7 @@ sfig7d = ggplot(subset(df7, architecture == 'mlp' & dataset == 'ALDH1'), aes(x =
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7e = ggplot(subset(df7, architecture == 'gcn' & dataset == 'ALDH1'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -799,7 +782,7 @@ sfig7e = ggplot(subset(df7, architecture == 'gcn' & dataset == 'ALDH1'), aes(x =
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7f = ggplot(subset(df7, architecture == 'rf' & dataset == 'ALDH1'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -810,7 +793,7 @@ sfig7f = ggplot(subset(df7, architecture == 'rf' & dataset == 'ALDH1'), aes(x = 
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7g = ggplot(subset(df7, architecture == 'mlp' & dataset == 'VDR'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -821,7 +804,7 @@ sfig7g = ggplot(subset(df7, architecture == 'mlp' & dataset == 'VDR'), aes(x = t
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7h = ggplot(subset(df7, architecture == 'gcn' & dataset == 'VDR'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -832,7 +815,7 @@ sfig7h = ggplot(subset(df7, architecture == 'gcn' & dataset == 'VDR'), aes(x = t
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme 
 
 sfig7i = ggplot(subset(df7, architecture == 'rf' & dataset == 'VDR'), aes(x = total_mols_screened, y=unique_patterns_mean, color=acquisition_method, fill=acquisition_method))+
   geom_ribbon(aes(ymin = unique_patterns_mean - unique_patterns_se, ymax = unique_patterns_mean + unique_patterns_se),
@@ -843,15 +826,17 @@ sfig7i = ggplot(subset(df7, architecture == 'rf' & dataset == 'VDR'), aes(x = to
   geom_line(linewidth=0.45) + 
   coord_cartesian(xlim = c(64, 1010), ylim = c(38, 48), expand=F) + 
   scale_y_continuous(breaks = seq(38,48, by=2)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.15, 0.15, 0.15, 0.15), "cm"))
+  default_theme
 
-sfig7 = plot_grid(sfig7a, sfig7b, sfig7c,
-                  sfig7d, sfig7e, sfig7f,
-                  sfig7g, sfig7h, sfig7i,
-                  labels = c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'),
-                  ncol=3, label_size=8)
+sfig7 = plot_grid(sfig7a, sfig7b, sfig7c, plot_spacer(),
+                  sfig7d, sfig7e, sfig7f, plot_spacer(),
+                  sfig7g, sfig7h, sfig7i, plot_spacer(),
+                  labels = c('a', 'b', 'c', '',
+                             'd', 'e', 'f', '',
+                             'g', 'h', 'i', ''),
+                  ncol=4, label_size=10)
 
-pdf('figures/sfig7.pdf', width = 110/25.4, height = 100/25.4)
+pdf('sfig7.pdf', width = 5.118, height = 3.8)
 print(sfig7)
 dev.off()
 
@@ -872,44 +857,14 @@ sfig8_colours = c("#5c8095", "#bbbbbb", "#efc57b")
 sfig8a = ggplot(subset(dfs8, dataset == 'PKM2' & architecture == 'mlp'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
   geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
   geom_point(size=0.75) +
-  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
   scale_color_manual(values=sfig8_colours) +
   scale_fill_manual(values=sfig8_colours) +
   coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
-# u r b l
-sfig8b = ggplot(subset(dfs8, dataset == 'PKM2' & architecture == 'gcn'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
-  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
-  geom_point(size=0.75) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=sfig8_colours) +
-  scale_fill_manual(values=sfig8_colours) +
-  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
-  scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
-sfig8c = ggplot(subset(dfs8, dataset == 'ALDH1' & architecture == 'mlp'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
-  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
-  geom_point(size=0.75) +
-  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=sfig8_colours) +
-  scale_fill_manual(values=sfig8_colours) +
-  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
-  scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
-
-sfig8d = ggplot(subset(dfs8, dataset == 'ALDH1' & architecture == 'gcn'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
-  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
-  geom_point(size=0.75) +
-  labs(y = '', x='', color = 'Method', fill = 'Method')+
-  scale_color_manual(values=sfig8_colours) +
-  scale_fill_manual(values=sfig8_colours) +
-  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
-  scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
-
-sfig8e = ggplot(subset(dfs8, dataset == 'VDR' & architecture == 'mlp'),  aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
+sfig8b = ggplot(subset(dfs8, dataset == 'ALDH1' & architecture == 'mlp'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
   geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
   geom_point(size=0.75) +
   labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
@@ -917,27 +872,59 @@ sfig8e = ggplot(subset(dfs8, dataset == 'VDR' & architecture == 'mlp'),  aes(x =
   scale_fill_manual(values=sfig8_colours) +
   coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
-sfig8f = ggplot(subset(dfs8, dataset == 'VDR' & architecture == 'gcn'),  aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
+sfig8c = ggplot(subset(dfs8, dataset == 'VDR' & architecture == 'mlp'),  aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
   geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
   geom_point(size=0.75) +
-  labs(y = '', x='molecules in the start set', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
   scale_color_manual(values=sfig8_colours) +
   scale_fill_manual(values=sfig8_colours) +
   coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 
-sfig8 = plot_grid(sfig8a, sfig8b, 
-                  sfig8c, sfig8d,
-                  sfig8e, sfig8f,
-                  labels = c('a', 'b', 'c', 'd', 'e', 'f'), 
-                  ncol=2, label_size=8)
+
+sfig8d = ggplot(subset(dfs8, dataset == 'PKM2' & architecture == 'gcn'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
+  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
+  geom_point(size=0.75) +
+  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
+  scale_color_manual(values=sfig8_colours) +
+  scale_fill_manual(values=sfig8_colours) +
+  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
+  scale_y_continuous(breaks = seq(0,6, by=1)) +
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+
+sfig8e = ggplot(subset(dfs8, dataset == 'ALDH1' & architecture == 'gcn'), aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
+  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
+  geom_point(size=0.75) +
+  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
+  scale_color_manual(values=sfig8_colours) +
+  scale_fill_manual(values=sfig8_colours) +
+  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
+  scale_y_continuous(breaks = seq(0,6, by=1)) +
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+
+sfig8f = ggplot(subset(dfs8, dataset == 'VDR' & architecture == 'gcn'),  aes(x = n_start, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture, group=acquisition_method))+
+  geom_pointrange(aes(ymin=enrichment_mean-enrichment_se, ymax=enrichment_mean+enrichment_se), size = 0, linewidth=0.45, alpha=0.5) + 
+  geom_point(size=0.75) +
+  labs(y = 'Mean enrichment in\n1000 acquired molecules', x='molecules in the start set', color = 'Method', fill = 'Method')+
+  scale_color_manual(values=sfig8_colours) +
+  scale_fill_manual(values=sfig8_colours) +
+  coord_cartesian(xlim = c(0.5, 6), ylim = c(0, 6), expand=F) +
+  scale_y_continuous(breaks = seq(0,6, by=1)) +
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
+
+
+sfig8 = plot_grid(sfig8a, sfig8b, sfig8c, plot_spacer(),
+                  sfig8d, sfig8e, sfig8f, plot_spacer(),
+                  labels = c('a', 'b', 'c', '',
+                             'd', 'e', 'f', ''), 
+                  ncol=4, label_size=10)
 
 # 180 mm/ 88 mm
-pdf('figures/sfig8.pdf', width = 88/25.4, height = 123/25.4)
+pdf('sfig8.pdf', width = 5.118, height = 2.4)
 print(sfig8)
 dev.off()
 
@@ -955,13 +942,13 @@ dfs9 = df %>%
 sfig9a = ggplot(subset(dfs9, dataset == 'FEN1' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
               color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in acquired molecules', x='', color = 'Method', fill = 'Method')+
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9b = ggplot(subset(dfs9, dataset == 'FEN1' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -973,7 +960,7 @@ sfig9b = ggplot(subset(dfs9, dataset == 'FEN1' & architecture == 'gcn'), aes(x =
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9c = ggplot(subset(dfs9, dataset == 'GBA' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -984,7 +971,7 @@ sfig9c = ggplot(subset(dfs9, dataset == 'GBA' & architecture == 'mlp'), aes(x = 
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9d = ggplot(subset(dfs9, dataset == 'GBA' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -996,19 +983,19 @@ sfig9d = ggplot(subset(dfs9, dataset == 'GBA' & architecture == 'gcn'), aes(x = 
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 # second row
 sfig9e = ggplot(subset(dfs9, dataset == 'KAT2A' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
               color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in acquired molecules', x='', color = 'Method', fill = 'Method')+
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9f = ggplot(subset(dfs9, dataset == 'KAT2A' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1020,7 +1007,7 @@ sfig9f = ggplot(subset(dfs9, dataset == 'KAT2A' & architecture == 'gcn'), aes(x 
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9g = ggplot(subset(dfs9, dataset == 'IDH1' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1031,7 +1018,7 @@ sfig9g = ggplot(subset(dfs9, dataset == 'IDH1' & architecture == 'mlp'), aes(x =
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9h = ggplot(subset(dfs9, dataset == 'IDH1' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1043,19 +1030,19 @@ sfig9h = ggplot(subset(dfs9, dataset == 'IDH1' & architecture == 'gcn'), aes(x =
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(0, 0.25, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 # third row
 sfig9i = ggplot(subset(dfs9, dataset == 'OPRK1' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
               color=NA, alpha=0.1) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='n molecules screened', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in acquired molecules', x='n molecules screened', color = 'Method', fill = 'Method')+
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9j = ggplot(subset(dfs9, dataset == 'OPRK1' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1067,7 +1054,7 @@ sfig9j = ggplot(subset(dfs9, dataset == 'OPRK1' & architecture == 'gcn'), aes(x 
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9k = ggplot(subset(dfs9, dataset == 'ADRB2' & architecture == 'mlp'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1078,7 +1065,7 @@ sfig9k = ggplot(subset(dfs9, dataset == 'ADRB2' & architecture == 'mlp'), aes(x 
   geom_line(size=0.45) +
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 sfig9l = ggplot(subset(dfs9, dataset == 'ADRB2' & architecture == 'gcn'), aes(x = total_mols_screened, y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture))+
   geom_ribbon(aes(ymin = enrichment_mean - enrichment_se, ymax = enrichment_mean + enrichment_se),
@@ -1090,16 +1077,18 @@ sfig9l = ggplot(subset(dfs9, dataset == 'ADRB2' & architecture == 'gcn'), aes(x 
   coord_cartesian(xlim = c(64, 1010), ylim = c(0, 6), expand=F) +
   scale_y_continuous(breaks = seq(0,6, by=1)) +
   scale_linetype_manual(values=c("dashed"))+
-  default_plot_theme + theme(plot.margin = unit(c(-0.25, 0.25, 0.5, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0.25), "cm"))
 
 
 sfig9 = plot_grid(sfig9a, sfig9b, sfig9c, sfig9d,
                   sfig9e, sfig9f, sfig9g, sfig9h,
                   sfig9i, sfig9j, sfig9k, sfig9l,
-                  labels = c('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'),
-                  ncol=4, label_size=8)
+                  labels = c('a', 'b', 'c', 'd', 
+                             'e', 'f', 'g', 'h', 
+                             'i', 'j', 'k', 'l'),
+                  ncol=4, label_size=10)
 
-pdf('figures/sfig9.pdf', width = 180/25.4, height = 123/25.4)
+pdf('sfig9.pdf', width = 5.118, height = 3.95)
 print(sfig9)
 dev.off()
 
@@ -1120,13 +1109,13 @@ dfs10$yield_label = dataset_yield$label[match(dfs10$dataset, dataset_yield$datas
 x_axis_values = round(sort(unique(log(dfs10$yield))), 2)
 
 sfig10a = ggplot(subset(dfs10, architecture == 'mlp'), aes(x = log(yield), y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture)) +
-  labs(y = 'Mean enrichment in\nacquired molecules', x='log(dataset yield)', color = 'Method', fill = 'Method')+
+  labs(y = 'Mean enrichment in acquired molecules', x='log(dataset yield)', color = 'Method', fill = 'Method')+
   scale_color_manual(values=custom_colours) +
   scale_fill_manual(values=custom_colours) +
   geom_smooth(method=lm, se=T, fullrange=TRUE, alpha=0.2, level=0.95, size=0.45)+
   coord_cartesian(xlim = c(x_axis_values[1], 8.6), ylim = c(0, 8), expand=F) +
   scale_y_continuous(breaks = seq(0,8, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0, 0.25, 0.25), "cm"))
 
 sfig10b = ggplot(subset(dfs10, architecture == 'gcn'), aes(x = log(yield), y=enrichment_mean, color=acquisition_method, fill=acquisition_method, linetype=architecture)) +
   labs(y = '', x='log(dataset yield)', color = 'Method', fill = 'Method')+
@@ -1135,13 +1124,13 @@ sfig10b = ggplot(subset(dfs10, architecture == 'gcn'), aes(x = log(yield), y=enr
   geom_smooth(method=lm, se=T, fullrange=TRUE, alpha=0.2, level=0.95, size=0.45)+
   coord_cartesian(xlim = c(x_axis_values[1], 8.6), ylim = c(0, 8), expand=F) +
   scale_y_continuous(breaks = seq(0,8, by=1)) +
-  default_plot_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0), "cm"))
+  default_theme + theme(plot.margin = unit(c(0.25, 0.25, 0.25, 0), "cm"))
 
-sfig10 = plot_grid(sfig10a, sfig10b, 
-                   labels = c('a', 'b'), 
-                   ncol=2, label_size=8)
+sfig10 = plot_grid(plot_spacer(), sfig10a, sfig10b, plot_spacer(),
+                   labels = c('', 'a', 'b', ''), 
+                   ncol=4, label_size=10)
 
-pdf('figures/sfig10.pdf', width = 88/25.4, height = 44/25.4)
+pdf('sfig10.pdf', width = 5.118, height = 1.4)
 print(sfig10)
 dev.off()
 
